@@ -1,4 +1,4 @@
 export class GeneralResponse {
-  status: number;
+  statusCode: number;
   data?: any;
 }

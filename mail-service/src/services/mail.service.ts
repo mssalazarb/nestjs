@@ -36,7 +36,7 @@ export class MailService {
     }
 
     return {
-      status: response[0].statusCode,
+      statusCode: response[0].statusCode,
     };
   }
 
@@ -64,7 +64,7 @@ export class MailService {
     }
 
     return {
-      status: response[0].statusCode,
+      statusCode: response[0].statusCode,
     };
   }
 
@@ -73,7 +73,7 @@ export class MailService {
       const response = await this.httpMail.getAllTemplates();
 
       return {
-        status: HttpStatus.OK,
+        statusCode: HttpStatus.OK,
         data: response.data,
       };
     } catch (e) {

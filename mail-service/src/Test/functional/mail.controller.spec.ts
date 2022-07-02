@@ -19,6 +19,7 @@ describe('MailController', () => {
 
   afterAll(async () => {
     await app.close();
+    nock.restore();
   });
 
   describe('Send Mail test', () => {
@@ -43,7 +44,7 @@ describe('MailController', () => {
         .send(mailHtml);
 
       expect(body).toStrictEqual({
-        status: 200,
+        statusCode: 200,
       });
       assert.equal(nockSendMail.isDone(), true);
     });
@@ -100,7 +101,7 @@ describe('MailController', () => {
         .send(mailTemplate);
 
       expect(body).toStrictEqual({
-        status: 200,
+        statusCode: 200,
       });
       assert.equal(nockSendMail.isDone(), true);
     });
@@ -158,7 +159,7 @@ describe('MailController', () => {
         .send();
 
       expect(body).toStrictEqual({
-        status: 200,
+        statusCode: 200,
         data: templates,
       });
       assert.equal(nockGetTemplates.isDone(), true);
@@ -187,9 +188,5 @@ describe('MailController', () => {
       });
       assert.equal(nockGetTemplates.isDone(), true);
     });
-  });
-
-  afterAll(async () => {
-    nock.restore();
   });
 });

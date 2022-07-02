@@ -16,4 +16,13 @@ export class Translations {
 
   @Column()
   value: string;
+
+  @Column({ name: 'created_at', default: 'now()' })
+  createdAt: Date;
+
+  @Column({ name: 'updated_at', nullable: true })
+  updatedAt: Date;
+
+  @Column({ name: 'deleted_at', nullable: true })
+  deletedAt: Date;
 }
