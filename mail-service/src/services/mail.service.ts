@@ -1,10 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { SendGridTemplate } from '../Models/SendGridTemplate';
-import { SendGridCommon } from '../Models/SendGridCommon';
-import { GeneralResponse } from '../Models/GeneralResponse';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { SendGridTemplate } from '../models/send-grid-template';
+import { SendGridCommon } from '../models/send-grid-common';
+import { GeneralResponse } from '../models/general-response';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
-import { HttpMail } from '../Http/http-mail';
+import { HttpMail } from './http/http-mail';
 
 @Injectable()
 export class MailService {
@@ -29,10 +29,10 @@ export class MailService {
         false,
       );
     } catch (e) {
-      return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: 'Error sending mail',
-      };
+      throw new HttpException(
+        'An error occurred while sending mail',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return {
@@ -57,10 +57,10 @@ export class MailService {
         false,
       );
     } catch (e) {
-      return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: 'Error sending mail',
-      };
+      throw new HttpException(
+        'An error occurred while sending mail',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return {
@@ -77,10 +77,10 @@ export class MailService {
         data: response.data,
       };
     } catch (e) {
-      return {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        data: [],
-      };
+      throw new HttpException(
+        'An error occurred while search templates',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

@@ -1,31 +1,32 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MailController } from '../Controllers/mail.controller';
-import { MailService } from '../Services/mail.service';
 import * as nock from 'nock';
 import * as assert from 'assert';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
-import { HttpMail } from '../Http/http-mail';
+import * as supertest from 'supertest';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../../app.module';
 
 describe('MailController', () => {
-  let controller: MailController;
+  let app: INestApplication;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot(), HttpModule],
-      controllers: [MailController],
-      providers: [MailService, ConfigService, HttpMail],
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
     }).compile();
 
-    controller = module.get<MailController>(MailController);
+    app = moduleRef.createNestApplication();
+    await app.init();
   });
 
-  describe('Send Mail Test', () => {
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('Send Mail test', () => {
     it('Should send email with html code', async () => {
       const mailHtml = {
         from: 'test@mail.com',
         to: 'destination@mail.com',
-        subject: 'Test Mail with HTML',
+        subject: 'test Mail with HTML',
         html: `<h1> Test Mail</h1>`,
       };
 
@@ -37,9 +38,11 @@ describe('MailController', () => {
         .post('/mail/send')
         .reply(200, { statusCode: 200, body: {} });
 
-      const response = await controller.sendMail(mailHtml);
+      const { body } = await supertest(app.getHttpServer())
+        .post('/mail')
+        .send(mailHtml);
 
-      expect(response).toStrictEqual({
+      expect(body).toStrictEqual({
         status: 200,
       });
       assert.equal(nockSendMail.isDone(), true);
@@ -49,7 +52,7 @@ describe('MailController', () => {
       const mailHtml = {
         from: 'test@mail.com',
         to: 'destination@mail.com',
-        subject: 'Test Mail with HTML',
+        subject: 'test Mail with HTML',
         html: `<h1> Test Mail</h1>`,
       };
 
@@ -64,11 +67,13 @@ describe('MailController', () => {
           error: 'Error sending mail',
         });
 
-      const response = await controller.sendMail(mailHtml);
+      const { body } = await supertest(app.getHttpServer())
+        .post('/mail')
+        .send(mailHtml);
 
-      expect(response).toStrictEqual({
-        status: 500,
-        error: 'Error sending mail',
+      expect(body).toStrictEqual({
+        statusCode: 500,
+        message: 'An error occurred while sending mail',
       });
       assert.equal(nockSendMail.isDone(), true);
     });
@@ -77,7 +82,7 @@ describe('MailController', () => {
       const mailTemplate = {
         from: 'test@mail.com',
         to: 'destination@mail.com',
-        subject: 'Test Mail with HTML',
+        subject: 'test Mail with HTML',
         template_id: 'testIdTemplate1232d1d213123',
         template_data: {},
       };
@@ -90,9 +95,11 @@ describe('MailController', () => {
         .post('/mail/send')
         .reply(200, {});
 
-      const response = await controller.sendMailTemplate(mailTemplate);
+      const { body } = await supertest(app.getHttpServer())
+        .post('/mail/template')
+        .send(mailTemplate);
 
-      expect(response).toStrictEqual({
+      expect(body).toStrictEqual({
         status: 200,
       });
       assert.equal(nockSendMail.isDone(), true);
@@ -102,7 +109,7 @@ describe('MailController', () => {
       const mailTemplate = {
         from: 'test@mail.com',
         to: 'destination@mail.com',
-        subject: 'Test Mail with HTML',
+        subject: 'test Mail with HTML',
         template_id: 'testIdTemplate1232d1d213123',
         template_data: {},
       };
@@ -115,11 +122,13 @@ describe('MailController', () => {
         .post('/mail/send')
         .reply(500, {});
 
-      const response = await controller.sendMailTemplate(mailTemplate);
+      const { body } = await supertest(app.getHttpServer())
+        .post('/mail/template')
+        .send(mailTemplate);
 
-      expect(response).toStrictEqual({
-        status: 500,
-        error: 'Error sending mail',
+      expect(body).toStrictEqual({
+        statusCode: 500,
+        message: 'An error occurred while sending mail',
       });
       assert.equal(nockSendMail.isDone(), true);
     });
@@ -144,9 +153,11 @@ describe('MailController', () => {
         })
         .reply(200, templates);
 
-      const response = await controller.getAllTemplates();
+      const { body } = await supertest(app.getHttpServer())
+        .get('/mail/templates')
+        .send();
 
-      expect(response).toStrictEqual({
+      expect(body).toStrictEqual({
         status: 200,
         data: templates,
       });
@@ -166,11 +177,13 @@ describe('MailController', () => {
         })
         .reply(500);
 
-      const response = await controller.getAllTemplates();
+      const { body } = await supertest(app.getHttpServer())
+        .get('/mail/templates')
+        .send();
 
-      expect(response).toStrictEqual({
-        status: 500,
-        data: [],
+      expect(body).toStrictEqual({
+        statusCode: 500,
+        message: 'An error occurred while search templates',
       });
       assert.equal(nockGetTemplates.isDone(), true);
     });

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HealthCheckController } from '../Controllers/health-check.controller';
-import { HealthCheckService } from '../Services/health-check.service';
+import { HealthCheckController } from '../../controllers/health-check.controller';
+import { HealthCheckService } from '../../services/health-check.service';
 
 describe('HealthCheckController', () => {
   let healthController: HealthCheckController;
@@ -14,7 +14,7 @@ describe('HealthCheckController', () => {
     healthController = app.get<HealthCheckController>(HealthCheckController);
   });
 
-  describe('Health Check Test', () => {
+  describe('Health Check test', () => {
     it('Should check if the microservice is alive', () => {
       expect(healthController.healthCheck()).toBe('I am alive!');
     });

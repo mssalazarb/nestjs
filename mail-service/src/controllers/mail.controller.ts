@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { MailService } from '../Services/mail.service';
-import { SendGridTemplate } from '../Models/SendGridTemplate';
-import { SendGridCommon } from '../Models/SendGridCommon';
-import { GeneralResponse } from '../Models/GeneralResponse';
+import { MailService } from '../services/mail.service';
+import { SendGridTemplate } from '../models/send-grid-template';
+import { SendGridCommon } from '../models/send-grid-common';
+import { GeneralResponse } from '../models/general-response';
 
 @Controller('mail')
 export class MailController {
