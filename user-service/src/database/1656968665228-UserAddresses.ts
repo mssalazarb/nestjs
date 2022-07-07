@@ -39,11 +39,11 @@ export class UserAddresses1656968665228 implements MigrationInterface {
           },
           {
             name: 'lat',
-            type: 'integer',
+            type: 'numeric',
           },
           {
             name: 'lng',
-            type: 'varchar',
+            type: 'numeric',
           },
           {
             name: 'default',

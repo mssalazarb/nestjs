@@ -10,11 +10,28 @@ import { UserAddresses1656968665228 } from './database/1656968665228-UserAddress
 import { UserCards1656969082536 } from './database/1656969082536-UserCards';
 import { Pleasures1656969659649 } from './database/1656969659649-Pleasures';
 import { UserPleasures1656969668377 } from './database/1656969668377-UserPleasures';
+import { GenderTypeController } from './controllers/gender-type.controller';
+import { GenderTypeService } from './services/gender-type.service';
+import { GenderTypes } from './entities/gender-types.entity';
+import { Users } from './entities/users.entity';
+import { UserAddresses } from './entities/user-addresses.entity';
+import { UserCards } from './entities/user-cards.entity';
+import { UserPleasures } from './entities/user-pleasures.entity';
+import { Pleasures } from './entities/pleasures.entity';
+import { UsersController } from './controllers/users.controller';
+import { UsersService } from './services/users.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([
+      GenderTypes,
+      Users,
+      UserAddresses,
+      UserCards,
+      UserPleasures,
+      Pleasures,
+    ]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule.forRoot()],
       inject: [ConfigService],
@@ -25,7 +42,14 @@ import { UserPleasures1656969668377 } from './database/1656969668377-UserPleasur
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [],
+        entities: [
+          GenderTypes,
+          Users,
+          UserAddresses,
+          UserCards,
+          UserPleasures,
+          Pleasures,
+        ],
         migrations: [
           GenderTypes1656968026507,
           User1656968511358,
@@ -42,7 +66,7 @@ import { UserPleasures1656969668377 } from './database/1656969668377-UserPleasur
       },
     }),
   ],
-  controllers: [HealthCheckController],
-  providers: [HealthCheckService],
+  controllers: [HealthCheckController, GenderTypeController, UsersController],
+  providers: [HealthCheckService, GenderTypeService, UsersService],
 })
 export class AppModule {}
