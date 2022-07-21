@@ -20,6 +20,12 @@ import { UserPleasures } from './entities/user-pleasures.entity';
 import { Pleasures } from './entities/pleasures.entity';
 import { UsersController } from './controllers/users.controller';
 import { UsersService } from './services/users.service';
+import { UserCardsController } from './controllers/user-cards.controller';
+import { UserAddressesController } from './controllers/user-addresses.controller';
+import { PleasureController } from './controllers/pleasure.controller';
+import { UserCardsService } from './services/user-cards.service';
+import { UserAddressesService } from './services/user-addresses.service';
+import { PleasuresService } from './services/pleasures.service';
 
 @Module({
   imports: [
@@ -66,7 +72,21 @@ import { UsersService } from './services/users.service';
       },
     }),
   ],
-  controllers: [HealthCheckController, GenderTypeController, UsersController],
-  providers: [HealthCheckService, GenderTypeService, UsersService],
+  controllers: [
+    HealthCheckController,
+    GenderTypeController,
+    UsersController,
+    UserCardsController,
+    UserAddressesController,
+    PleasureController,
+  ],
+  providers: [
+    HealthCheckService,
+    GenderTypeService,
+    UsersService,
+    UserCardsService,
+    UserAddressesService,
+    PleasuresService,
+  ],
 })
 export class AppModule {}

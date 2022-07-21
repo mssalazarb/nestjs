@@ -10,28 +10,34 @@ import {
 import { GeneralResponse } from '../models/general-response';
 import { UsersService } from '../services/users.service';
 import { Users } from '../entities/users.entity';
+import { UserPassword } from '../models/user-password';
 
 @Controller('/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  saveGender(@Body() user: Users): Promise<GeneralResponse> {
+  saveUser(@Body() user: Users): Promise<GeneralResponse> {
     return this.usersService.saveUser(user);
   }
 
   @Put()
-  updateGender(@Body() user: Users): Promise<GeneralResponse> {
+  updateUser(@Body() user: Users): Promise<GeneralResponse> {
     return this.usersService.updateUser(user);
   }
 
+  @Put('/password')
+  updatePassword(@Body() user: UserPassword): Promise<GeneralResponse> {
+    return this.usersService.updatePassword(user);
+  }
+
   @Delete()
-  deleteGender(@Query('id') userId: number): Promise<GeneralResponse> {
+  deleteUser(@Query('id') userId: number): Promise<GeneralResponse> {
     return this.usersService.deleteUser(userId);
   }
 
   @Get()
-  getGenders(): Promise<GeneralResponse> {
+  getUsers(): Promise<GeneralResponse> {
     return this.usersService.getUsers();
   }
 }

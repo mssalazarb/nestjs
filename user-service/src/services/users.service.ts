@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
 import PasswordUtil from '../utils/password-util';
+import { UserPassword } from '../models/user-password';
 
 @Injectable()
 export class UsersService {
@@ -44,7 +45,19 @@ export class UsersService {
 
   async updateUser(user: Users): Promise<GeneralResponse> {
     if (user.id) {
-      let oldUser = await this.searchUserById(user.id);
+      let oldUser = await this.searchUserByCriteria({ id: user.id });
+      oldUser = Object.assign(oldUser, user);
+
+      return this.updateById(oldUser);
+    } else {
+      throw new HttpException('Error updating user', HttpStatus.CONFLICT);
+    }
+  }
+
+  async updatePassword(user: UserPassword): Promise<GeneralResponse> {
+    if (user.id) {
+      let oldUser = await this.searchUserByCriteria({ id: user.id });
+      user.password = await PasswordUtil.encryptPassword(user.password);
       oldUser = Object.assign(oldUser, user);
 
       return this.updateById(oldUser);
@@ -55,7 +68,7 @@ export class UsersService {
 
   async deleteUser(userId: number): Promise<GeneralResponse> {
     if (userId) {
-      const user = await this.searchUserById(userId);
+      const user = await this.searchUserByCriteria({ id: userId });
       user.deletedAt = new Date();
 
       return this.updateById(user);
@@ -74,24 +87,6 @@ export class UsersService {
       statusCode: HttpStatus.OK,
       data: users,
     };
-  }
-
-  async searchUserById(userId: number) {
-    const user = await this.dataSource
-      .createQueryBuilder()
-      .select('us')
-      .from(Users, 'us')
-      .where({ id: userId })
-      .getOne();
-
-    if (!user) {
-      throw new HttpException(
-        'Error updating translation',
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    return user;
   }
 
   async searchUserByCriteria(criteria: any) {
